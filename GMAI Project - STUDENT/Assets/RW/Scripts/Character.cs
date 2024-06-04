@@ -37,6 +37,14 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         #region Variables
 
+        public StateMachine movementSM;
+        public StateMachine meleeSM;
+        public StandingState standing;
+        public DuckingState ducking;
+        public JumpingState jumping;
+        public DrawingState drawing;
+        public SheathingState sheathing;
+        public SwingingState swinging;
 
 #pragma warning disable 0649
         [SerializeField]
@@ -89,6 +97,10 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float MeleeRestThreshold => meleeRestThreshold;
         public int isMelee => Animator.StringToHash("IsMelee");
         public int crouchParam => Animator.StringToHash("Crouch");
+        public int drawMeleeParam => Animator.StringToHash("DrawMelee");
+        public int sheathMeleeParam => Animator.StringToHash("SheathMelee");
+        public int swingMeleeParam => Animator.StringToHash("SwingMelee");
+
 
         public float ColliderSize
         {
@@ -213,6 +225,36 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         #region MonoBehaviour Callbacks
 
+        private void Start()
+        {
+            movementSM = new StateMachine();
+            meleeSM = new StateMachine();
+
+            standing = new StandingState(this, movementSM);
+            ducking = new DuckingState(this, movementSM);
+            jumping = new JumpingState(this, movementSM);
+            drawing = new DrawingState(this, movementSM);
+            sheathing = new SheathingState(this, movementSM);
+            swinging = new SwingingState(this, meleeSM);
+
+            movementSM.Initialize(standing);
+            //meleeSM.Initialize(sheathing);
+        }
+
+        private void Update()
+        {
+            movementSM.CurrentState.HandleInput();
+            //meleeSM.CurrentState.HandleInput();
+
+            movementSM.CurrentState.LogicUpdate();
+            //meleeSM.CurrentState.LogicUpdate();
+        }
+
+        private void FixedUpdate()
+        {
+            movementSM.CurrentState.PhysicsUpdate();
+            //meleeSM.CurrentState.PhysicsUpdate();
+        }
 
         #endregion
     }
