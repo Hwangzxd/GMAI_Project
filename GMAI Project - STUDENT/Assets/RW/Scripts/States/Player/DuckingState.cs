@@ -61,7 +61,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void HandleInput()
         {
             base.HandleInput();
-            crouchHeld = Input.GetButton("Fire3");
+            crouchHeld = Input.GetButton("Crouch");
         }
 
         public override void LogicUpdate()

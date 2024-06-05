@@ -36,6 +36,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         private bool jump;
         private bool crouch;
+        //private bool dash;
         private bool draw;
         private bool sheath;
         private bool attack;
@@ -51,6 +52,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             rotationSpeed = character.RotationSpeed;
             crouch = false;
             jump = false;
+            //dash = false;
             draw = false;
             sheath = false;
             attack = false;
@@ -59,8 +61,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void HandleInput()
         {
             base.HandleInput();
-            crouch = Input.GetButtonDown("Fire3");
+            crouch = Input.GetButtonDown("Crouch");
             jump = Input.GetButtonDown("Jump");
+            //dash = Input.GetButtonDown("Dash");
             draw = Input.GetButtonDown("Draw");
             sheath = Input.GetButtonDown("Sheath");
             attack = Input.GetButtonDown("Attack");
@@ -74,6 +77,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.ducking);
             }
+
+            //if (dash)
+            //{
+            //    stateMachine.ChangeState(character.dashing);
+            //}
 
             if (draw && !character.isWeaponDrawn)
             {
