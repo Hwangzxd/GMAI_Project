@@ -38,7 +38,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         #region Variables
 
         public StateMachine movementSM;
-        public StateMachine meleeSM;
         public StandingState standing;
         public DuckingState ducking;
         public JumpingState jumping;
@@ -60,7 +59,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         [SerializeField]
         private Collider hitBox;
         [SerializeField]
-        private Animator anim;
+        public Animator anim;
         [SerializeField]
         private ParticleSystem shockWave;
 #pragma warning restore 0649
@@ -71,6 +70,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         [SerializeField]
         private float collisionOverlapRadius = 0.1f;
 
+        [SerializeField]
         private GameObject currentWeapon;
         private Quaternion currentRotation;
         private int horizonalMoveParam = Animator.StringToHash("H_Speed");
@@ -101,6 +101,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public int sheathMeleeParam => Animator.StringToHash("SheathMelee");
         public int swingMeleeParam => Animator.StringToHash("SwingMelee");
 
+        public bool isWeaponDrawn { get; private set; }
 
         public float ColliderSize
         {
@@ -173,6 +174,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         public void Equip(GameObject weapon = null)
         {
+            isWeaponDrawn = true;
+
             if (weapon != null)
             {
                 currentWeapon = Instantiate(weapon, handTransform.position, handTransform.rotation, handTransform);
@@ -192,6 +195,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         public void SheathWeapon()
         {
+            isWeaponDrawn = false;
+
             ParentCurrentWeapon(sheathTransform);
         }
 
@@ -212,6 +217,24 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         private void ParentCurrentWeapon(Transform parent)
         {
+            if (currentWeapon == null)
+            {
+                Debug.LogError("currentWeapon is not set.");
+                return;
+            }
+
+            if (currentWeapon.transform == null)
+            {
+                Debug.LogError("currentWeapon does not have a Transform component.");
+                return;
+            }
+
+            if (parent == null)
+            {
+                Debug.LogError("parent Transform is null.");
+                return;
+            }
+
             if (currentWeapon.transform.parent == parent)
             {
                 return;
@@ -228,32 +251,27 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private void Start()
         {
             movementSM = new StateMachine();
-            meleeSM = new StateMachine();
 
             standing = new StandingState(this, movementSM);
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
             drawing = new DrawingState(this, movementSM);
             sheathing = new SheathingState(this, movementSM);
-            swinging = new SwingingState(this, meleeSM);
+            swinging = new SwingingState(this, movementSM);
 
             movementSM.Initialize(standing);
-            //meleeSM.Initialize(sheathing);
         }
 
         private void Update()
         {
             movementSM.CurrentState.HandleInput();
-            //meleeSM.CurrentState.HandleInput();
 
             movementSM.CurrentState.LogicUpdate();
-            //meleeSM.CurrentState.LogicUpdate();
         }
 
         private void FixedUpdate()
         {
             movementSM.CurrentState.PhysicsUpdate();
-            //meleeSM.CurrentState.PhysicsUpdate();
         }
 
         #endregion

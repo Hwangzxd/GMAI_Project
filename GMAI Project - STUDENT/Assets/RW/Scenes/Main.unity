@@ -1643,6 +1643,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 489429440}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &492420210 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4141579295651927529, guid: 7127b469d232e3443972071e989a2bc9,
+    type: 3}
+  m_PrefabInstance: {fileID: 618908715}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &618908715
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3977,6 +3983,7 @@ MonoBehaviour:
   meleeRestThreshold: 10
   diveThreshold: 1
   collisionOverlapRadius: 0.25
+  currentWeapon: {fileID: 492420210}
 --- !u!136 &1252697825
 CapsuleCollider:
   m_ObjectHideFlags: 0

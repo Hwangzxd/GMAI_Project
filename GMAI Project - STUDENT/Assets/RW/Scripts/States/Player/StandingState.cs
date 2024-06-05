@@ -36,6 +36,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         private bool jump;
         private bool crouch;
+        private bool draw;
+        private bool sheath;
+        private bool attack;
 
         public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
@@ -48,6 +51,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             rotationSpeed = character.RotationSpeed;
             crouch = false;
             jump = false;
+            draw = false;
+            sheath = false;
+            attack = false;
         }
 
         public override void HandleInput()
@@ -55,15 +61,35 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.HandleInput();
             crouch = Input.GetButtonDown("Fire3");
             jump = Input.GetButtonDown("Jump");
+            draw = Input.GetButtonDown("Draw");
+            sheath = Input.GetButtonDown("Sheath");
+            attack = Input.GetButtonDown("Attack");
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
+
             if (crouch)
             {
                 stateMachine.ChangeState(character.ducking);
             }
+
+            if (draw && !character.isWeaponDrawn)
+            {
+                stateMachine.ChangeState(character.drawing);
+            }
+
+            if (sheath && character.isWeaponDrawn)
+            {
+                stateMachine.ChangeState(character.sheathing);
+            }
+
+            if (attack && character.isWeaponDrawn)
+            {
+                stateMachine.ChangeState(character.swinging);
+            }
+
             else if (jump)
             {
                 stateMachine.ChangeState(character.jumping);
