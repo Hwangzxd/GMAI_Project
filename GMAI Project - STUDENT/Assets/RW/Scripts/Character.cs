@@ -178,6 +178,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             isWeaponDrawn = true;
 
+            SoundManager.Instance.PlaySound(SoundManager.Instance.meleeEquip);
+
             if (weapon != null)
             {
                 currentWeapon = Instantiate(weapon, handTransform.position, handTransform.rotation, handTransform);
@@ -200,6 +202,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             isWeaponDrawn = false;
 
             ParentCurrentWeapon(sheathTransform);
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSheath);
         }
 
         public void Unequip()

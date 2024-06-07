@@ -40,6 +40,7 @@ public class NPC : MonoBehaviour
         {
             if (Vector3.Distance(player.transform.position, transform.position) <= attackRange)
             {
+                Debug.Log("Punching player");
                 animator.SetTrigger("Punch");
                 timePassed = 0;
             }

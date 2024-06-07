@@ -21,6 +21,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             character.SetAnimationBool(character.swingMeleeParam, true);
             attack = false;
             timePassed = 0f;
+
+            //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
         }
 
         public override void Exit()
