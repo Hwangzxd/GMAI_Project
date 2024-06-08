@@ -1,2 +1,17 @@
 tree("Root")
+	repeat
+		fallback
+			tree("ChasePlayer")
+			tree("Attack")
+			tree("Idle")
+
+tree("Attack")
+	repeat
+		Attack
+
+tree("ChasePlayer")
+	repeat
+		SetDestination_Player
+
+tree("Idle")
 	Succeed

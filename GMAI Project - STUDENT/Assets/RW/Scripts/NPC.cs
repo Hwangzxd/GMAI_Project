@@ -59,7 +59,7 @@ public class NPC : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            print(true);
+            //print(true);
             player = collision.gameObject;
         }
     }
