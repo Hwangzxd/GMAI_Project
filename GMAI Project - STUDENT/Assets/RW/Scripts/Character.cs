@@ -42,6 +42,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public DuckingState ducking;
         public JumpingState jumping;
         //public DashingState dashing;
+        public HitState hit;
         public DrawingState drawing;
         public SheathingState sheathing;
         public SwingingState swinging;
@@ -99,6 +100,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public int isMelee => Animator.StringToHash("IsMelee");
         public int crouchParam => Animator.StringToHash("Crouch");
         //public int dashParam => Animator.StringToHash("Dash");
+        public int hitParam => Animator.StringToHash("Hit");
         public int drawMeleeParam => Animator.StringToHash("DrawMelee");
         public int sheathMeleeParam => Animator.StringToHash("SheathMelee");
         public int swingMeleeParam => Animator.StringToHash("SwingMelee");
@@ -178,7 +180,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             isWeaponDrawn = true;
 
-            SoundManager.Instance.PlaySound(SoundManager.Instance.meleeEquip);
+            //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeEquip);
 
             if (weapon != null)
             {
@@ -262,6 +264,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
             //dashing = new DashingState(this, movementSM);
+            hit = new HitState(this, movementSM);
             drawing = new DrawingState(this, movementSM);
             sheathing = new SheathingState(this, movementSM);
             swinging = new SwingingState(this, movementSM);

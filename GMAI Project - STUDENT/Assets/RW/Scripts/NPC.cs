@@ -29,7 +29,7 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        animator.SetFloat("H_Speed", agent.velocity.magnitude / agent.speed);
+        animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
 
         if (player == null)
         {
@@ -40,8 +40,7 @@ public class NPC : MonoBehaviour
         {
             if (Vector3.Distance(player.transform.position, transform.position) <= attackRange)
             {
-                Debug.Log("Punching player");
-                animator.SetTrigger("Punch");
+                animator.SetTrigger("Attack");
                 timePassed = 0;
             }
         }
@@ -53,7 +52,7 @@ public class NPC : MonoBehaviour
             agent.SetDestination(player.transform.position);
         }
         newDestinationCD -= Time.deltaTime;
-        transform.LookAt(player.transform);
+        //transform.LookAt(player.transform);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -83,14 +82,14 @@ public class NPC : MonoBehaviour
         }
     }
 
-    //public void StartDealDamage()
-    //{
-    //    GetComponentInChildren<EnemyDamageDealer>().StartDealDamage();
-    //}
-    //public void EndDealDamage()
-    //{
-    //    GetComponentInChildren<EnemyDamageDealer>().EndDealDamage();
-    //}
+    public void StartDealDamage()
+    {
+        GetComponentInChildren<NPCDamageDealer>().StartDealDamage();
+    }
+    public void EndDealDamage()
+    {
+        GetComponentInChildren<NPCDamageDealer>().EndDealDamage();
+    }
 
     public void HitVFX(Vector3 hitPosition)
     {
