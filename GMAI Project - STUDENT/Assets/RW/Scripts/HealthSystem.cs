@@ -6,8 +6,8 @@ using UnityEngine;
 public class HealthSystem : MonoBehaviour
 {
     [SerializeField] float health = 100;
-    [SerializeField] GameObject hitVFX;
-    [SerializeField] GameObject ragdoll;
+    //[SerializeField] GameObject hitVFX;
+    //[SerializeField] GameObject ragdoll;
 
     Animator animator;
     void Start()
@@ -18,7 +18,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
-        animator.SetTrigger("damage");
+        animator.SetTrigger("Damage");
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 
         if (health <= 0)
@@ -29,13 +29,13 @@ public class HealthSystem : MonoBehaviour
 
     void Die()
     {
-        Instantiate(ragdoll, transform.position, transform.rotation);
+        //Instantiate(ragdoll, transform.position, transform.rotation);
         Destroy(this.gameObject);
     }
-    public void HitVFX(Vector3 hitPosition)
-    {
-        GameObject hit = Instantiate(hitVFX, hitPosition, Quaternion.identity);
-        Destroy(hit, 3f);
+    //public void HitVFX(Vector3 hitPosition)
+    //{
+    //    GameObject hit = Instantiate(hitVFX, hitPosition, Quaternion.identity);
+    //    Destroy(hit, 3f);
 
-    }
+    //}
 }

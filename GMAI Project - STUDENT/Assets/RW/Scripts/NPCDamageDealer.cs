@@ -21,13 +21,13 @@ public class NPCDamageDealer : MonoBehaviour
         {
             RaycastHit hit;
 
-            int layerMask = 1 << 8;
+            int layerMask = 1 << 13;
             if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
             {
                 if (hit.transform.TryGetComponent(out HealthSystem health))
                 {
                     health.TakeDamage(weaponDamage);
-                    health.HitVFX(hit.point);
+                    //health.HitVFX(hit.point);
                     hasDealtDamage = true;
                 }
             }
