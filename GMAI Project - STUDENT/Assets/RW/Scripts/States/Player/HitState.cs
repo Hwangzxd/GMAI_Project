@@ -23,7 +23,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             timePassed = 0f;
 
             Debug.Log("Taking damage");
-            //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
         }
 
         public override void Exit()
@@ -42,8 +41,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.LogicUpdate();
 
             timePassed += Time.deltaTime;
-            clipLength = character.anim.GetCurrentAnimatorClipInfo(1)[0].clip.length;
-            clipSpeed = character.anim.GetCurrentAnimatorStateInfo(1).speed;
+            clipLength = character.anim.GetCurrentAnimatorClipInfo(2)[0].clip.length;
+            clipSpeed = character.anim.GetCurrentAnimatorStateInfo(2).speed;
 
             if (timePassed >= clipLength / clipSpeed && hit)
             {
@@ -54,6 +53,18 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.standing);
             }
+        }
+
+        public void TakeDamage(float damageAmount)
+        {
+            character.health -= damageAmount;
+            character.SetAnimationBool(character.hitParam, true);
+            //CameraShake.Instance.ShakeCamera(2f, 0.2f);
+
+            //if (character.health <= 0)
+            //{
+            //    character.Die();
+            //}
         }
     }
 }

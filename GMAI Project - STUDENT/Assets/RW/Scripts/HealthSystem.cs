@@ -12,7 +12,7 @@ public class HealthSystem : MonoBehaviour
     Animator animator;
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     public void TakeDamage(float damageAmount)

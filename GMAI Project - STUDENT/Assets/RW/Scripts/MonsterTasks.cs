@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using Panda;
 
 public class MonsterTasks : MonoBehaviour
@@ -8,10 +9,13 @@ public class MonsterTasks : MonoBehaviour
     private Rigidbody rb;
     private Monster monster;
     GameObject player;
-    UnityEngine.AI.NavMeshAgent agent;
+    NavMeshAgent agent;
     Animator animator;
+    AIVision vision;
     float timePassed;
     float newDestinationCD = 0.5f;
+    public float range;
+    public Transform centrePoint;
 
     [HideInInspector]
     public Vector3 destination; // The movement destination
@@ -20,14 +24,17 @@ public class MonsterTasks : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
         monster = GetComponent<Monster>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+        vision = GetComponentInChildren<AIVision>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
     void Update()
     {
+        animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+
         if (player != null)
         {
             return;
@@ -47,15 +54,23 @@ public class MonsterTasks : MonoBehaviour
     }
 
     [Task]
+    bool InAttackRange()
+    {
+        if (Vector3.Distance(player.transform.position, transform.position) <= monster.attackRange)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    [Task]
     void Attack()
     {
         if (animator != null)
         {
-            if (Vector3.Distance(player.transform.position, transform.position) <= monster.attackRange)
-            {
-                animator.SetTrigger("Attack");
-                timePassed = 0;
-            }
+            animator.SetTrigger("Attack");
+            timePassed = 0;
         }
 
         timePassed += Time.deltaTime;
@@ -65,7 +80,12 @@ public class MonsterTasks : MonoBehaviour
     void TakeDamage(float damageAmount)
     {
         monster.health -= damageAmount;
-        animator.SetTrigger("Damage");
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Damage");
+        }
+
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 
         if (monster.health <= 0)
@@ -75,65 +95,75 @@ public class MonsterTasks : MonoBehaviour
     }
 
     [Task]
-    void Die()
+    public bool IsHealthLessThan(float health)
+    {
+        return monster.health < health;
+    }
+
+    [Task]
+    bool Die()
     {
         //Instantiate(ragdoll, transform.position, transform.rotation);
         Destroy(this.gameObject);
+        //animator.SetTrigger("Die");
+        return true;
     }
 
-    //// Task to set the destination to the player's position
-    //[Task]
-    //bool SetDestination_Enemy()
-    //{
-    //    bool succeeded = false;
+    // Task to check if a player is visible
+    [Task]
+    bool IsVisible_Player()
+    {
+        // Iterate through the list of visible objects
+        foreach (var v in vision.visibles)
+        {
+            // Check if the tag of the visible object is "Player"
+            if (v != null && v.CompareTag("Player"))
+            {
+                // If a player is found, return true
+                return true;
+            }
+        }
 
-    //    if (player != null)
-    //    {
-    //        agent.SetDestination(player.transform.position);
-    //        succeeded = true;
-    //    }
-    //    return succeeded;
-    //}
+        // If no player is found, return false
+        return false;
+    }
 
-    //[Task]
-    //public bool SetDestination(Vector3 p)
-    //{
-    //    destination = p;
-    //    agent.destination = destination;
+    [Task]
+    bool IsDestinationReached()
+    {
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            return true;
+        }
 
-    //    if (Task.isInspected)
-    //        Task.current.debugInfo = string.Format("({0}, {1})", destination.x, destination.y);
-    //    return true;
-    //}
+        return false;
+    }
 
-    //[Task]
-    //public void WaitArrival()
-    //{
-    //    var task = Task.current;
-    //    float d = agent.remainingDistance;
-    //    if (!task.isStarting && agent.remainingDistance <= 1e-2)
-    //    {
-    //        task.Succeed();
-    //        d = 0.0f;
-    //    }
+    [Task]
+    bool FindRandomPoint()
+    {
+        Vector3 point;
 
-    //    if (Task.isInspected)
-    //        task.debugInfo = string.Format("d-{0:0.00}", d);
-    //}
+        if (RandomPoint(centrePoint.position, range, out point))
+        {
+            agent.SetDestination(point);
+            return true;
+        }
 
-    //[Task]
-    //public void MoveTo(Vector3 dst)
-    //{
-    //    SetDestination(dst);
-    //    if (Task.current.isStarting)
-    //        agent.isStopped = false;
-    //    WaitArrival();
-    //}
+        return false;
+    }
 
-    //[Task]
-    //public void MoveTo_Destination()
-    //{
-    //    MoveTo(destination);
-    //    WaitArrival();
-    //}
+    bool RandomPoint(Vector3 center, float range, out Vector3 result)
+    {
+        Vector3 randomPoint = center + Random.insideUnitSphere * range;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
+        {
+            result = hit.position;
+            return true;
+        }
+
+        result = Vector3.zero;
+        return false;
+    }
 }

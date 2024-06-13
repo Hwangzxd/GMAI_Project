@@ -71,6 +71,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private float diveThreshold = 1f;
         [SerializeField]
         private float collisionOverlapRadius = 0.1f;
+        [SerializeField]
+        public float health = 100;
 
         [SerializeField]
         private GameObject currentWeapon;
@@ -100,10 +102,12 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public int isMelee => Animator.StringToHash("IsMelee");
         public int crouchParam => Animator.StringToHash("Crouch");
         //public int dashParam => Animator.StringToHash("Dash");
-        public int hitParam => Animator.StringToHash("Hit");
+        public int hitParam => Animator.StringToHash("Damage");
         public int drawMeleeParam => Animator.StringToHash("DrawMelee");
         public int sheathMeleeParam => Animator.StringToHash("SheathMelee");
         public int swingMeleeParam => Animator.StringToHash("SwingMelee");
+        //public int swingMelee2Param => Animator.StringToHash("SwingMelee2");
+        //public int swingMelee3Param => Animator.StringToHash("SwingMelee3");
 
         public bool isWeaponDrawn { get; private set; }
 
@@ -190,6 +194,34 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 ParentCurrentWeapon(handTransform);
             }
+        }
+
+        public void StartDealDamage()
+        {
+            currentWeapon.GetComponentInChildren<DamageDealer>().StartDealDamage();
+        }
+
+        public void EndDealDamage()
+        {
+            currentWeapon.GetComponentInChildren<DamageDealer>().EndDealDamage();
+        }
+
+        public void TakeDamage(float damageAmount)
+        {
+            health -= damageAmount;
+            TriggerAnimation(hitParam);
+            //CameraShake.Instance.ShakeCamera(2f, 0.2f);
+
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
+
+        void Die()
+        {
+            //Instantiate(ragdoll, transform.position, transform.rotation);
+            Destroy(this.gameObject);
         }
 
         public void DiveBomb()

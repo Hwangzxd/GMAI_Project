@@ -40,6 +40,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private bool draw;
         private bool sheath;
         private bool attack;
+        private bool hit;
+
+        HealthSystem healthSystem;
 
         public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
@@ -56,6 +59,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             draw = false;
             sheath = false;
             attack = false;
+            hit = false;
         }
 
         public override void HandleInput()
@@ -96,6 +100,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             if (attack && character.isWeaponDrawn)
             {
                 stateMachine.ChangeState(character.swinging);
+            }
+
+            if (hit)
+            {
+                stateMachine.ChangeState(character.hit);
             }
 
             else if (jump)

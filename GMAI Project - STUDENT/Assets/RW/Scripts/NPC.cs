@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(CapsuleCollider))]
 public class NPC : MonoBehaviour
@@ -15,14 +16,14 @@ public class NPC : MonoBehaviour
     [SerializeField] float aggroRange = 4f;
 
     GameObject player;
-    UnityEngine.AI.NavMeshAgent agent;
+    NavMeshAgent agent;
     Animator animator;
     float timePassed;
     float newDestinationCD = 0.5f;
 
     void Start()
     {
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
