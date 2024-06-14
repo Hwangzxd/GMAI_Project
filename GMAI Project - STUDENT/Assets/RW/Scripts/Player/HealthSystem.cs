@@ -10,6 +10,10 @@ public class HealthSystem : MonoBehaviour
     //[SerializeField] GameObject ragdoll;
 
     Animator animator;
+
+    //Define an event to notify when the player is hit
+    public event System.Action OnHit;
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -19,8 +23,11 @@ public class HealthSystem : MonoBehaviour
     {
         health -= damageAmount;
         Debug.Log("Player has taken damage");
-        animator.SetTrigger("Damage");
+        //animator.SetTrigger("Damage");
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
+
+        //Notify subscribers that the player was hit
+        OnHit?.Invoke();
 
         if (health <= 0)
         {
@@ -30,8 +37,9 @@ public class HealthSystem : MonoBehaviour
 
     void Die()
     {
+        //stateMachine.ChangeState(character.death);
         //Instantiate(ragdoll, transform.position, transform.rotation);
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
     }
     //public void HitVFX(Vector3 hitPosition)
     //{

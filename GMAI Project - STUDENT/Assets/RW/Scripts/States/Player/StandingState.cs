@@ -41,11 +41,17 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private bool sheath;
         private bool attack;
         private bool hit;
+        private bool dead;
 
         HealthSystem healthSystem;
 
         public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
+        }
+
+        private void HandleHit()
+        {
+            hit = true;
         }
 
         public override void Enter()
@@ -60,6 +66,22 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             sheath = false;
             attack = false;
             hit = false;
+            dead = false;
+
+            healthSystem = character.GetComponent<HealthSystem>();
+            if (healthSystem != null)
+            {
+                healthSystem.OnHit += HandleHit;
+            }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            if (healthSystem != null)
+            {
+                healthSystem.OnHit -= HandleHit;
+            }
         }
 
         public override void HandleInput()
@@ -105,6 +127,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             if (hit)
             {
                 stateMachine.ChangeState(character.hit);
+            }
+
+            if (dead)
+            {
+                stateMachine.ChangeState(character.death);
             }
 
             else if (jump)

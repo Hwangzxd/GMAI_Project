@@ -4,32 +4,32 @@ using UnityEngine;
 
 namespace RayWenderlich.Unity.StatePatternInUnity
 {
-    public class HitState : StandingState
+    public class DeathState : StandingState
     {
         private float timePassed;
         private float clipLength;
         private float clipSpeed;
-        private bool hit;
+        private bool dead;
 
-        public HitState(Character character, StateMachine stateMachine) : base(character, stateMachine)
+        public DeathState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
         }
 
         public override void Enter()
         {
             base.Enter();
-            character.SetAnimationBool(character.hitParam, true);
-            hit = false;
+            character.SetAnimationBool(character.deathParam, true);
+            dead = false;
             timePassed = 0f;
 
-            Debug.Log("Taking damage");
+            Debug.Log("Died");
         }
 
-        public override void Exit()
-        {
-            base.Exit();
-            character.SetAnimationBool(character.hitParam, false);
-        }
+        //public override void Exit()
+        //{
+        //    base.Exit();
+        //    //character.SetAnimationBool(character.hitParam, false);
+        //}
 
         public override void HandleInput()
         {
@@ -41,18 +41,18 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.LogicUpdate();
 
             timePassed += Time.deltaTime;
-            clipLength = character.anim.GetCurrentAnimatorClipInfo(2)[0].clip.length;
-            clipSpeed = character.anim.GetCurrentAnimatorStateInfo(2).speed;
+            clipLength = character.anim.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+            clipSpeed = character.anim.GetCurrentAnimatorStateInfo(0).speed;
 
-            if (timePassed >= clipLength / clipSpeed && hit)
+            if (timePassed >= clipLength / clipSpeed && dead)
             {
-                stateMachine.ChangeState(character.hit);
+                stateMachine.ChangeState(character.death);
             }
 
-            if (timePassed >= clipLength / clipSpeed)
-            {
-                stateMachine.ChangeState(character.standing);
-            }
+            //if (timePassed >= clipLength / clipSpeed)
+            //{
+            //    stateMachine.ChangeState(character.standing);
+            //}
         }
 
         //public void TakeDamage(float damageAmount)

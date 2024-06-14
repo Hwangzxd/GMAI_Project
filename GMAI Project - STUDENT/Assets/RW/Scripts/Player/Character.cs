@@ -43,6 +43,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public JumpingState jumping;
         //public DashingState dashing;
         public HitState hit;
+        public DeathState death;
         public DrawingState drawing;
         public SheathingState sheathing;
         public SwingingState swinging;
@@ -103,6 +104,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public int crouchParam => Animator.StringToHash("Crouch");
         //public int dashParam => Animator.StringToHash("Dash");
         public int hitParam => Animator.StringToHash("Damage");
+        public int deathParam => Animator.StringToHash("Dead");
         public int drawMeleeParam => Animator.StringToHash("DrawMelee");
         public int sheathMeleeParam => Animator.StringToHash("SheathMelee");
         public int swingMeleeParam => Animator.StringToHash("SwingMelee");
@@ -206,23 +208,23 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             currentWeapon.GetComponentInChildren<DamageDealer>().EndDealDamage();
         }
 
-        public void TakeDamage(float damageAmount)
-        {
-            health -= damageAmount;
-            TriggerAnimation(hitParam);
-            //CameraShake.Instance.ShakeCamera(2f, 0.2f);
+        //public void TakeDamage(float damageAmount)
+        //{
+        //    health -= damageAmount;
+        //    TriggerAnimation(hitParam);
+        //    //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 
-            if (health <= 0)
-            {
-                Die();
-            }
-        }
+        //    if (health <= 0)
+        //    {
+        //        Die();
+        //    }
+        //}
 
-        void Die()
-        {
-            //Instantiate(ragdoll, transform.position, transform.rotation);
-            Destroy(this.gameObject);
-        }
+        //void Die()
+        //{
+        //    //Instantiate(ragdoll, transform.position, transform.rotation);
+        //    Destroy(this.gameObject);
+        //}
 
         public void DiveBomb()
         {
@@ -297,6 +299,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             jumping = new JumpingState(this, movementSM);
             //dashing = new DashingState(this, movementSM);
             hit = new HitState(this, movementSM);
+            death = new DeathState(this, movementSM);
             drawing = new DrawingState(this, movementSM);
             sheathing = new SheathingState(this, movementSM);
             swinging = new SwingingState(this, movementSM);
