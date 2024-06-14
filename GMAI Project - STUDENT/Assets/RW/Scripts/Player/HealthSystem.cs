@@ -18,6 +18,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
+        Debug.Log("Player has taken damage");
         animator.SetTrigger("Damage");
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 

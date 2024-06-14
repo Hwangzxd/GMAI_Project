@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.AI;
 using Panda;
 
-public class MonsterTasks : MonoBehaviour
+public class CreatureTasks : MonoBehaviour
 {
     private Rigidbody rb;
-    private Monster monster;
+    private Creature creature;
     GameObject player;
     NavMeshAgent agent;
     Animator animator;
@@ -25,7 +25,7 @@ public class MonsterTasks : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        monster = GetComponent<Monster>();
+        creature = GetComponent<Creature>();
         animator = GetComponentInChildren<Animator>();
         vision = GetComponentInChildren<AIVision>();
         player = GameObject.FindGameObjectWithTag("Player");
@@ -44,7 +44,7 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     void SetDestination_Player()
     {
-        if (newDestinationCD <= 0 && Vector3.Distance(player.transform.position, agent.transform.position) <= monster.aggroRange)
+        if (newDestinationCD <= 0 && Vector3.Distance(player.transform.position, agent.transform.position) <= creature.aggroRange)
         {
             newDestinationCD = 0.5f;
             agent.SetDestination(player.transform.position);
@@ -56,11 +56,13 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     bool InAttackRange()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) <= monster.attackRange)
+        if (Vector3.Distance(player.transform.position, transform.position) <= creature.attackRange)
         {
+            Debug.Log("Player is in attack range");
             return true;
         }
 
+        Debug.Log("Player is out of attack range");
         return false;
     }
 
@@ -79,7 +81,7 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     void TakeDamage(float damageAmount)
     {
-        monster.health -= damageAmount;
+        creature.health -= damageAmount;
 
         if (animator != null)
         {
@@ -88,7 +90,7 @@ public class MonsterTasks : MonoBehaviour
 
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 
-        if (monster.health <= 0)
+        if (creature.health <= 0)
         {
             Die();
         }
@@ -97,7 +99,7 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     public bool IsHealthLessThan(float health)
     {
-        return monster.health < health;
+        return creature.health < health;
     }
 
     [Task]

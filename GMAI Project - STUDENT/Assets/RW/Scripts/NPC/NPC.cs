@@ -1,3 +1,4 @@
+using RayWenderlich.Unity.StatePatternInUnity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -92,11 +93,11 @@ public class NPC : MonoBehaviour
         GetComponentInChildren<NPCDamageDealer>().EndDealDamage();
     }
 
-    public void HitVFX(Vector3 hitPosition)
-    {
-        GameObject hit = Instantiate(hitVFX, hitPosition, Quaternion.identity);
-        Destroy(hit, 3f);
-    }
+    //public void HitVFX(Vector3 hitPosition)
+    //{
+    //    GameObject hit = Instantiate(hitVFX, hitPosition, Quaternion.identity);
+    //    Destroy(hit, 3f);
+    //}
 
     private void OnDrawGizmos()
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster : MonoBehaviour
+public class Creature : MonoBehaviour
 {
     [SerializeField] public float health = 3;
     //[SerializeField] GameObject hitVFX;
