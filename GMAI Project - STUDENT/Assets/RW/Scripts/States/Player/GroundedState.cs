@@ -59,6 +59,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void HandleInput()
         {
             base.HandleInput();
+
+            if (!character.isAlive) return;
+
             verticalInput = Input.GetAxis("Vertical");
             horizontalInput = Input.GetAxis("Horizontal");
         }

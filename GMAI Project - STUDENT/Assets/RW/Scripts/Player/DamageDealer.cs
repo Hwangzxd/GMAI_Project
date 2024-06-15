@@ -24,7 +24,7 @@ public class DamageDealer : MonoBehaviour
             int layerMask = 1 << 7;
             if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
             {
-                if (hit.transform.TryGetComponent(out NPC enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
+                if (hit.transform.TryGetComponent(out FSM.NPC enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
                 {
                     enemy.TakeDamage(weaponDamage);
                     //enemy.HitVFX(hit.point);

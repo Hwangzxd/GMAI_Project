@@ -55,11 +55,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             clipLength = character.anim.GetCurrentAnimatorClipInfo(1)[0].clip.length;
             clipSpeed = character.anim.GetCurrentAnimatorStateInfo(1).speed;
 
-            //if (timePassed >= comboResetTime)
-            //{
-            //    currentAttack = 0;
-            //}
-
             if (timePassed >= clipLength / clipSpeed && attack)
             {
                 stateMachine.ChangeState(character.swinging);
@@ -69,20 +64,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.standing);
             }
-
-            //if (timePassed >= clipLength / clipSpeed)
-            //{
-            //    if (attack)
-            //    {
-            //        PerformComboAttack();
-            //        timePassed = 0f;
-            //        //stateMachine.ChangeState(character.swinging);
-            //    }
-            //    else
-            //    {
-            //        stateMachine.ChangeState(character.standing);
-            //    }
-            //}
         }
 
         //private void PerformComboAttack()

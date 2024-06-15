@@ -6,8 +6,9 @@ namespace FSM
 {
     public class NPCIdleState : AIState
     {
-        protected float speed;
-        protected float rotationSpeed;
+        private bool attack;
+        private bool hit;
+        private bool dead;
 
         public NPCIdleState(NPC npc, AIStateMachine aiStateMachine) : base(npc, aiStateMachine)
         {
@@ -16,12 +17,15 @@ namespace FSM
         public override void Enter()
         {
             base.Enter();
+
+            attack = false;
+            hit = false;
+            dead = false;
         }
 
         public override void Exit()
         {
             base.Exit();
-            //npc.ResetMoveParams();
         }
 
         public override void HandleInput()
@@ -29,9 +33,34 @@ namespace FSM
             base.HandleInput();
         }
 
-        public override void PhysicsUpdate()
+        public override void LogicUpdate()
         {
-            base.PhysicsUpdate();
+            base.LogicUpdate();
+
+            //if (attack)
+            //{
+            //    aiStateMachine.ChangeState(npc.attack);
+            //}
+
+            //if (npc.timePassed >= npc.attackCD && npc.player.GetComponent<RayWenderlich.Unity.StatePatternInUnity.Character>().isAlive)
+            //{
+            //    if (Vector3.Distance(npc.player.transform.position, npc.transform.position) <= npc.attackRange)
+            //    {
+            //        aiStateMachine.ChangeState(npc.attack);
+            //        npc.timePassed = 0;
+            //    }
+            //}
+            //npc.timePassed += Time.deltaTime;
+
+            if (hit)
+            {
+                aiStateMachine.ChangeState(npc.hit);
+            }
+
+            else if (dead)
+            {
+                aiStateMachine.ChangeState(npc.death);
+            }
         }
     }
 }

@@ -1,36 +1,44 @@
 tree("Root")
-    fallback
-        sequence
-            IsHealthLessThan(0.1)
-            Die
-        tree("Alive")
+	parallel
+		repeat mute tree("Alive")
+		repeat mute tree("Die")
 
 tree("Alive")
-    parallel
-        repeat
-            fallback
-                sequence
-                    IsVisible_Player
-                    tree("ChaseAndAttack")
-                tree("RoamAndIdle")
-        repeat
-            Wait(0.1) // Slight delay to allow other tasks to run
+	repeat
+		fallback
+			tree("ChasePlayer")
+			random
+				tree("Roaming")
+				tree("Idle")
 
-tree("ChaseAndAttack")
-    fallback
-        sequence
-            InAttackRange
-            Attack
-        sequence
-            IsVisible_Player
-            SetDestination_Player
+tree("Roaming")
+	while not IsVisible_Player
+		repeat
+			sequence
+				IsDestinationReached
+				FindRandomPoint
 
-tree("RoamAndIdle")
-    repeat
-        fallback
-            sequence
-                IsDestinationReached
-                random
-                    Wait(2.0) // Idle for 2 seconds
-                    FindRandomPoint
-            IsVisible_Player
+tree("Attack")
+	sequence
+		InAttackRange
+		Attack
+
+tree("ChasePlayer")
+	fallback
+		sequence
+			InAggroRange
+			tree("Attack")
+		repeat 1
+			sequence
+				IsVisible_Player
+				SetDestination_Player
+
+tree("Idle")
+	while not IsVisible_Player
+		sequence
+			Wait(2.0)
+
+tree("Die")
+	sequence
+		IsHealthLessThan(0.1)
+		Die

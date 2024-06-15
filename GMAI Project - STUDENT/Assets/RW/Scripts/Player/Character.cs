@@ -112,6 +112,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         //public int swingMelee3Param => Animator.StringToHash("SwingMelee3");
 
         public bool isWeaponDrawn { get; private set; }
+        public bool isAlive = true;
 
         public float ColliderSize
         {
@@ -206,6 +207,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public void EndDealDamage()
         {
             currentWeapon.GetComponentInChildren<DamageDealer>().EndDealDamage();
+        }
+
+        public void DeathComplete()
+        {
+            Destroy(this.gameObject);
         }
 
         //public void TakeDamage(float damageAmount)

@@ -1,4 +1,3 @@
-using RayWenderlich.Unity.StatePatternInUnity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditorInternal;
@@ -6,119 +5,158 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
 
-[RequireComponent(typeof(CapsuleCollider))]
-public class NPC : MonoBehaviour
+namespace FSM
 {
-    [SerializeField] float health = 3;
-    [SerializeField] GameObject hitVFX;
-    [SerializeField] GameObject ragdoll;
-
-    [Header("Combat")]
-    [SerializeField] float attackCD = 3f;
-    [SerializeField] float attackRange = 1f;
-    [SerializeField] float aggroRange = 4f;
-
-    GameObject player;
-    NavMeshAgent agent;
-    Animator animator;
-    float timePassed;
-    float newDestinationCD = 0.5f;
-
-    void Start()
+    [RequireComponent(typeof(CapsuleCollider))]
+    public class NPC : MonoBehaviour
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player");
-    }
+        public AIStateMachine aiMovementSM;
+        public NPCIdleState idle;
+        public NPCHitState hit;
+        public NPCDeathState death;
+        public NPCAttackState attack;
 
-    void Update()
-    {
-        animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+        [SerializeField] public float health = 3;
 
-        if (player == null)
+        [Header("Combat")]
+        [SerializeField] public float attackCD = 3f;
+        [SerializeField] public float attackRange = 1f;
+        [SerializeField] public float aggroRange = 4f;
+
+        public int hitParam => Animator.StringToHash("Damage");
+        public int deathParam => Animator.StringToHash("Dead");
+        public int attackParam => Animator.StringToHash("Attack");
+
+        public bool isAlive = true;
+
+        public GameObject player;
+        NavMeshAgent agent;
+        public Animator animator;
+        public float timePassed;
+        float newDestinationCD = 0.5f;
+
+        void Start()
         {
-            return;
+            agent = GetComponent<NavMeshAgent>();
+            animator = GetComponent<Animator>();
+            player = GameObject.FindGameObjectWithTag("Player");
+
+            aiMovementSM = new AIStateMachine();
+
+            idle = new NPCIdleState(this, aiMovementSM);
+            hit = new NPCHitState(this, aiMovementSM);
+            death = new NPCDeathState(this, aiMovementSM);
+            attack = new NPCAttackState(this, aiMovementSM);
+
+            aiMovementSM.Initialize(idle);
         }
 
-        if (timePassed >= attackCD)
+        void Update()
         {
-            if (Vector3.Distance(player.transform.position, transform.position) <= attackRange)
+            aiMovementSM.CurrentState.HandleInput();
+
+            aiMovementSM.CurrentState.LogicUpdate();
+
+            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+
+            if (player == null)
             {
-                animator.SetTrigger("Attack");
-                timePassed = 0;
+                return;
+            }
+
+            if (timePassed >= attackCD && player.GetComponent<RayWenderlich.Unity.StatePatternInUnity.Character>().isAlive)
+            {
+                if (Vector3.Distance(player.transform.position, transform.position) <= attackRange)
+                {
+                    animator.SetTrigger("Attack");
+                    timePassed = 0;
+                }
+            }
+            timePassed += Time.deltaTime;
+
+            if (newDestinationCD <= 0 && Vector3.Distance(player.transform.position, transform.position) <= aggroRange)
+            {
+                newDestinationCD = 0.5f;
+                agent.SetDestination(player.transform.position);
+            }
+            newDestinationCD -= Time.deltaTime;
+
+            if (Vector3.Distance(player.transform.position, transform.position) <= aggroRange)
+            {
+                transform.LookAt(player.transform);
             }
         }
-        timePassed += Time.deltaTime;
 
-        if (newDestinationCD <= 0 && Vector3.Distance(player.transform.position, transform.position) <= aggroRange)
+        private void FixedUpdate()
         {
-            newDestinationCD = 0.5f;
-            agent.SetDestination(player.transform.position);
-        }
-        newDestinationCD -= Time.deltaTime;
-        transform.LookAt(player.transform);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            //print(true);
-            player = collision.gameObject;
-        }
-    }
-
-    void Berserk()
-    {
-        animator.SetTrigger("LowHealth");
-    }
-
-    void Die()
-    {
-        animator.SetTrigger("Dead");
-  
-        //Instantiate(ragdoll, transform.position, transform.rotation);
-        //Destroy(this.gameObject);
-    }
-
-    public void TakeDamage(float damageAmount)
-    {
-        health -= damageAmount;
-        animator.SetTrigger("Damage");
-        Debug.Log("NPC took damage");
-        //CameraShake.Instance.ShakeCamera(2f, 0.2f);
-
-        if (health < 2)
-        {
-            Berserk();
+            aiMovementSM.CurrentState.PhysicsUpdate();
         }
 
-        if (health <= 0)
+        private void OnCollisionEnter(Collision collision)
         {
-            Die();
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                player = collision.gameObject;
+            }
         }
-    }
 
-    public void StartDealDamage()
-    {
-        GetComponentInChildren<NPCDamageDealer>().StartDealDamage();
-    }
-    public void EndDealDamage()
-    {
-        GetComponentInChildren<NPCDamageDealer>().EndDealDamage();
-    }
+        void Berserk()
+        {
+            animator.SetTrigger("LowHealth");
+        }
 
-    //public void HitVFX(Vector3 hitPosition)
-    //{
-    //    GameObject hit = Instantiate(hitVFX, hitPosition, Quaternion.identity);
-    //    Destroy(hit, 3f);
-    //}
+        void Die()
+        {
+            agent.isStopped = true;
+            animator.SetTrigger("Dead");
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, aggroRange);
+            
+
+            //Instantiate(ragdoll, transform.position, transform.rotation);
+            //Destroy(this.gameObject);
+        }
+
+        public void TakeDamage(float damageAmount)
+        {
+            health -= damageAmount;
+            animator.SetTrigger("Damage");
+
+            if (health < 2)
+            {
+                Berserk();
+            }
+
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
+
+        public void StartDealDamage()
+        {
+            GetComponentInChildren<NPCDamageDealer>().StartDealDamage();
+        }
+        public void EndDealDamage()
+        {
+            GetComponentInChildren<NPCDamageDealer>().EndDealDamage();
+        }
+
+        public void SetAnimationBool(int param, bool value)
+        {
+            animator.SetBool(param, value);
+        }
+
+        public void TriggerAnimation(int param)
+        {
+            animator.SetTrigger(param);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aggroRange);
+        }
     }
 }

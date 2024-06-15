@@ -22,6 +22,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             dead = false;
             timePassed = 0f;
 
+            character.isAlive = false; // Set isAlive to false
+
             Debug.Log("Died");
         }
 

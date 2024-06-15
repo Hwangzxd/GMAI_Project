@@ -22,7 +22,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             hit = false;
             timePassed = 0f;
 
-            Debug.Log("Taking damage");
+            //Debug.Log("Taking damage");
         }
 
         public override void Exit()
@@ -41,16 +41,39 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.LogicUpdate();
 
             timePassed += Time.deltaTime;
-            clipLength = character.anim.GetCurrentAnimatorClipInfo(2)[0].clip.length;
-            clipSpeed = character.anim.GetCurrentAnimatorStateInfo(2).speed;
+            //clipLength = character.anim.GetCurrentAnimatorClipInfo(2)[0].clip.length;
+            //clipSpeed = character.anim.GetCurrentAnimatorStateInfo(2).speed;
 
-            if (timePassed >= clipLength / clipSpeed && hit)
+            //if (timePassed >= clipLength / clipSpeed && hit)
+            //{
+            //    stateMachine.ChangeState(character.hit);
+            //}
+
+            //if (timePassed >= clipLength / clipSpeed)
+            //{
+            //    stateMachine.ChangeState(character.standing);
+            //}
+
+            var clipInfo = character.anim.GetCurrentAnimatorClipInfo(2);
+            if (clipInfo.Length > 0)
             {
-                stateMachine.ChangeState(character.hit);
+                clipLength = clipInfo[0].clip.length;
+                clipSpeed = character.anim.GetCurrentAnimatorStateInfo(2).speed;
+
+                if (timePassed >= clipLength / clipSpeed && hit)
+                {
+                    stateMachine.ChangeState(character.hit);
+                }
+
+                if (timePassed >= clipLength / clipSpeed)
+                {
+                    stateMachine.ChangeState(character.standing);
+                }
             }
-
-            if (timePassed >= clipLength / clipSpeed)
+            else
             {
+                Debug.LogWarning("No animation clip found on layer 2.");
+                // Handle cases where there is no animation on layer 2
                 stateMachine.ChangeState(character.standing);
             }
         }

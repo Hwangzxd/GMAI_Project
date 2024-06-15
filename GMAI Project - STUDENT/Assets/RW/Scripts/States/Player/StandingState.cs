@@ -54,6 +54,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             hit = true;
         }
 
+        private void HandleDeath()
+        {
+            dead = true;
+        }
+
         public override void Enter()
         {
             base.Enter();
@@ -73,6 +78,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 healthSystem.OnHit += HandleHit;
             }
+
+            if (healthSystem.health < 1)
+            {
+                healthSystem.OnDeath += HandleDeath;
+            }
         }
 
         public override void Exit()
@@ -87,6 +97,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void HandleInput()
         {
             base.HandleInput();
+
+            if (!character.isAlive) return;
+
             crouch = Input.GetButtonDown("Crouch");
             jump = Input.GetButtonDown("Jump");
             //dash = Input.GetButtonDown("Dash");

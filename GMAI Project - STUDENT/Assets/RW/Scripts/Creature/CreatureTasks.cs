@@ -26,7 +26,7 @@ public class CreatureTasks : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         creature = GetComponent<Creature>();
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
         vision = GetComponentInChildren<AIVision>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
@@ -54,6 +54,18 @@ public class CreatureTasks : MonoBehaviour
     }
 
     [Task]
+    bool InAggroRange()
+    {
+        if (Vector3.Distance(player.transform.position, transform.position) <= creature.aggroRange)
+        {
+            Debug.Log("Player is in aggro range");
+            return true;
+        }
+
+        return false;
+    }
+
+    [Task]
     bool InAttackRange()
     {
         if (Vector3.Distance(player.transform.position, transform.position) <= creature.attackRange)
@@ -62,7 +74,6 @@ public class CreatureTasks : MonoBehaviour
             return true;
         }
 
-        Debug.Log("Player is out of attack range");
         return false;
     }
 
@@ -168,4 +179,46 @@ public class CreatureTasks : MonoBehaviour
         result = Vector3.zero;
         return false;
     }
+
+    //[Task]
+    //public bool SetDestination(Vector3 p)
+    //{
+    //    destination = p;
+    //    agent.destination = destination;
+
+    //    if (Task.isInspected)
+    //        Task.current.debugInfo = string.Format("({0}, {1})", destination.x, destination.y);
+    //    return true;
+    //}
+
+    //[Task]
+    //public void WaitArrival()
+    //{
+    //    var task = Task.current;
+    //    float d = agent.remainingDistance;
+    //    if (!task.isStarting && agent.remainingDistance <= 1e-2)
+    //    {
+    //        task.Succeed();
+    //        d = 0.0f;
+    //    }
+
+    //    if (Task.isInspected)
+    //        task.debugInfo = string.Format("d-{0:0.00}", d);
+    //}
+
+    //[Task]
+    //public void MoveTo(Vector3 dst)
+    //{
+    //    SetDestination(dst);
+    //    if (Task.current.isStarting)
+    //        agent.isStopped = false;
+    //    WaitArrival();
+    //}
+
+    //[Task]
+    //public void MoveTo_Destination()
+    //{
+    //    MoveTo(destination);
+    //    WaitArrival();
+    //}
 }
