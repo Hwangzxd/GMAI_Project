@@ -25,6 +25,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             attack = false;
             timePassed = 0f;
 
+            character.anim.applyRootMotion = true;
+            //character.anim.SetFloat("speed", 0f);
+
             //PlayAttackAnimation();
 
             //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
@@ -34,6 +37,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             base.Exit();
             character.SetAnimationBool(character.swingMeleeParam, false);
+
+            character.anim.applyRootMotion = false;
         }
 
         public override void HandleInput()

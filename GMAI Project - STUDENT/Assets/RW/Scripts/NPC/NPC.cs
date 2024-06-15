@@ -1,8 +1,10 @@
 using RayWenderlich.Unity.StatePatternInUnity;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(CapsuleCollider))]
 public class NPC : MonoBehaviour
@@ -54,7 +56,7 @@ public class NPC : MonoBehaviour
             agent.SetDestination(player.transform.position);
         }
         newDestinationCD -= Time.deltaTime;
-        //transform.LookAt(player.transform);
+        transform.LookAt(player.transform);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -66,17 +68,30 @@ public class NPC : MonoBehaviour
         }
     }
 
+    void Berserk()
+    {
+        animator.SetTrigger("LowHealth");
+    }
+
     void Die()
     {
-        Instantiate(ragdoll, transform.position, transform.rotation);
-        Destroy(this.gameObject);
+        animator.SetTrigger("Dead");
+  
+        //Instantiate(ragdoll, transform.position, transform.rotation);
+        //Destroy(this.gameObject);
     }
 
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
         animator.SetTrigger("Damage");
+        Debug.Log("NPC took damage");
         //CameraShake.Instance.ShakeCamera(2f, 0.2f);
+
+        if (health < 2)
+        {
+            Berserk();
+        }
 
         if (health <= 0)
         {

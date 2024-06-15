@@ -76,7 +76,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float health = 100;
 
         [SerializeField]
-        private GameObject currentWeapon;
+        public GameObject currentWeapon;
         private Quaternion currentRotation;
         private int horizonalMoveParam = Animator.StringToHash("H_Speed");
         private int verticalMoveParam = Animator.StringToHash("V_Speed");
@@ -292,6 +292,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         private void Start()
         {
+            anim = GetComponent<Animator>();
+
             movementSM = new StateMachine();
 
             standing = new StandingState(this, movementSM);
