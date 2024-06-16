@@ -27,7 +27,12 @@ public class DamageDealer : MonoBehaviour
                 if (hit.transform.TryGetComponent(out FSM.NPC enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
                 {
                     enemy.TakeDamage(weaponDamage);
-                    //enemy.HitVFX(hit.point);
+                    hasDealtDamage.Add(hit.transform.gameObject);
+                }
+
+                if (hit.transform.TryGetComponent(out CreatureTasks creature) && !hasDealtDamage.Contains(hit.transform.gameObject))
+                {
+                    creature.TakeDamage(weaponDamage);
                     hasDealtDamage.Add(hit.transform.gameObject);
                 }
             }

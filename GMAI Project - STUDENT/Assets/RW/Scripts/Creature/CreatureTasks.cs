@@ -42,15 +42,19 @@ public class CreatureTasks : MonoBehaviour
     }
 
     [Task]
-    void SetDestination_Player()
+    bool SetDestination_Player()
     {
+        bool succeeded = false;
+
         if (newDestinationCD <= 0 && Vector3.Distance(player.transform.position, agent.transform.position) <= creature.aggroRange)
         {
             newDestinationCD = 0.5f;
             agent.SetDestination(player.transform.position);
+            succeeded = true;
         }
 
         newDestinationCD -= Time.deltaTime;
+        return succeeded;
     }
 
     [Task]
@@ -58,7 +62,7 @@ public class CreatureTasks : MonoBehaviour
     {
         if (Vector3.Distance(player.transform.position, transform.position) <= creature.aggroRange)
         {
-            Debug.Log("Player is in aggro range");
+            //Debug.Log("Player is in aggro range");
             return true;
         }
 
@@ -70,7 +74,7 @@ public class CreatureTasks : MonoBehaviour
     {
         if (Vector3.Distance(player.transform.position, transform.position) <= creature.attackRange)
         {
-            Debug.Log("Player is in attack range");
+            //Debug.Log("Player is in attack range");
             return true;
         }
 
@@ -78,28 +82,32 @@ public class CreatureTasks : MonoBehaviour
     }
 
     [Task]
-    void Attack()
+    bool Attack()
     {
+        bool succeeded = false;
+
         if (animator != null)
         {
             animator.SetTrigger("Attack");
             timePassed = 0;
+
+            succeeded = true;
         }
 
         timePassed += Time.deltaTime;
+        return succeeded;
     }
 
     [Task]
-    void TakeDamage(float damageAmount)
+    public void TakeDamage(float damageAmount)
     {
         creature.health -= damageAmount;
+        agent.isStopped = true;
 
         if (animator != null)
         {
             animator.SetTrigger("Damage");
         }
-
-        //CameraShake.Instance.ShakeCamera(2f, 0.2f);
 
         if (creature.health <= 0)
         {
@@ -116,9 +124,9 @@ public class CreatureTasks : MonoBehaviour
     [Task]
     bool Die()
     {
-        //Instantiate(ragdoll, transform.position, transform.rotation);
-        Destroy(this.gameObject);
-        //animator.SetTrigger("Die");
+        agent.isStopped = true;
+        animator.SetTrigger("Dead");
+        Debug.Log("Creature died.");
         return true;
     }
 
@@ -180,45 +188,22 @@ public class CreatureTasks : MonoBehaviour
         return false;
     }
 
-    //[Task]
-    //public bool SetDestination(Vector3 p)
-    //{
-    //    destination = p;
-    //    agent.destination = destination;
+    public void StopAgent()
+    {
+        agent.isStopped = true;
+        Debug.Log("Agent stopped.");
+    }
 
-    //    if (Task.isInspected)
-    //        Task.current.debugInfo = string.Format("({0}, {1})", destination.x, destination.y);
-    //    return true;
-    //}
+    // Method to start the agent (called by animation event)
+    public void StartAgent()
+    {
+        agent.isStopped = false;
+        Debug.Log("Agent started.");
+    }
 
-    //[Task]
-    //public void WaitArrival()
-    //{
-    //    var task = Task.current;
-    //    float d = agent.remainingDistance;
-    //    if (!task.isStarting && agent.remainingDistance <= 1e-2)
-    //    {
-    //        task.Succeed();
-    //        d = 0.0f;
-    //    }
+    public void DestroyAgent()
+    {
+        Destroy(this.gameObject);
+    }
 
-    //    if (Task.isInspected)
-    //        task.debugInfo = string.Format("d-{0:0.00}", d);
-    //}
-
-    //[Task]
-    //public void MoveTo(Vector3 dst)
-    //{
-    //    SetDestination(dst);
-    //    if (Task.current.isStarting)
-    //        agent.isStopped = false;
-    //    WaitArrival();
-    //}
-
-    //[Task]
-    //public void MoveTo_Destination()
-    //{
-    //    MoveTo(destination);
-    //    WaitArrival();
-    //}
 }

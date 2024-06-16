@@ -1,42 +1,36 @@
 tree("Root")
-	parallel
-		repeat mute tree("Alive")
-		repeat mute tree("Die")
+	fallback
+		sequence
+			IsHealthLessThan(0.1)
+			Die
+		tree("Alive")
 
 tree("Alive")
 	repeat
 		fallback
 			tree("ChasePlayer")
-			random
-				tree("Roaming")
-				tree("Idle")
+			tree("Roaming")	
 
 tree("Roaming")
-	while not IsVisible_Player
+	while 
+		sequence
+			not IsVisible_Player
+			not InAggroRange
 		repeat
 			sequence
 				IsDestinationReached
 				FindRandomPoint
-
-tree("Attack")
-	sequence
-		InAttackRange
-		Attack
+				Wait(2.0)
 
 tree("ChasePlayer")
 	fallback
 		sequence
-			InAggroRange
-			tree("Attack")
-		repeat 1
-			sequence
-				IsVisible_Player
-				SetDestination_Player
-
-tree("Idle")
-	while not IsVisible_Player
+			InAttackRange
+			Attack
 		sequence
-			Wait(2.0)
+			InAggroRange
+			IsVisible_Player
+			SetDestination_Player
 
 tree("Die")
 	sequence
