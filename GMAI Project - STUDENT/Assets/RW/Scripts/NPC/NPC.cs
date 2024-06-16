@@ -170,13 +170,14 @@ namespace FSM
             Debug.Log("Agent stopped.");
         }
 
-        // Method to start the agent (called by animation event)
+        //Method to start the agent (called by animation event)
         public void StartAgent()
         {
             agent.isStopped = false;
             Debug.Log("Agent started.");
         }
 
+        // Code taken from: https://youtu.be/dYs0WRzzoRc?si=trA4glk6j-zH6tzZ
         public bool RandomPoint(Vector3 center, float range, out Vector3 result)
         {
 

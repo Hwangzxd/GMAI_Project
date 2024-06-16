@@ -31,8 +31,3 @@ tree("ChasePlayer")
 			InAggroRange
 			IsVisible_Player
 			SetDestination_Player
-
-tree("Die")
-	sequence
-		IsHealthLessThan(0.1)
-		Die

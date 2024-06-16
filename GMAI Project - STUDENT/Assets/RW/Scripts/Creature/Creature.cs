@@ -5,8 +5,6 @@ using UnityEngine;
 public class Creature : MonoBehaviour
 {
     [SerializeField] public float health = 3;
-    //[SerializeField] GameObject hitVFX;
-    //[SerializeField] GameObject ragdoll;
 
     [Header("Combat")]
     [SerializeField] public float attackCD = 3f;

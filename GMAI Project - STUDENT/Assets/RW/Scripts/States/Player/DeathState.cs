@@ -22,16 +22,10 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             dead = false;
             timePassed = 0f;
 
-            character.isAlive = false; // Set isAlive to false
+            character.isAlive = false; 
 
             Debug.Log("Died");
         }
-
-        //public override void Exit()
-        //{
-        //    base.Exit();
-        //    //character.SetAnimationBool(character.hitParam, false);
-        //}
 
         public override void HandleInput()
         {
@@ -50,23 +44,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.death);
             }
-
-            //if (timePassed >= clipLength / clipSpeed)
-            //{
-            //    stateMachine.ChangeState(character.standing);
-            //}
         }
-
-        //public void TakeDamage(float damageAmount)
-        //{
-        //    character.health -= damageAmount;
-        //    character.SetAnimationBool(character.hitParam, true);
-        //    CameraShake.Instance.ShakeCamera(2f, 0.2f);
-
-        //    if (character.health <= 0)
-        //    {
-        //        character.Die();
-        //    }
-        //}
     }
 }

@@ -11,9 +11,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private float clipSpeed;
         private bool attack;
 
-        //public int currentAttack = 0;
-        //private float comboResetTime = 1f; // Time in seconds to reset the combo if no new attack
-
         public SwingingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
         }
@@ -26,9 +23,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             timePassed = 0f;
 
             character.anim.applyRootMotion = true;
-            //character.anim.SetFloat("speed", 0f);
-
-            //PlayAttackAnimation();
 
             //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
         }
@@ -65,35 +59,5 @@ namespace RayWenderlich.Unity.StatePatternInUnity
                 stateMachine.ChangeState(character.standing);
             }
         }
-
-        //private void PerformComboAttack()
-        //{
-        //    currentAttack++;
-        //    if (currentAttack > 3) 
-        //    {
-        //        currentAttack = 1;
-        //    }
-        //    PlayAttackAnimation();
-        //}
-
-        //private void PlayAttackAnimation()
-        //{
-        //    switch (currentAttack)
-        //    {
-        //        case 1:
-        //            character.SetAnimationBool(character.swingMeleeParam, true);
-        //            break;
-        //        case 2:
-        //            character.SetAnimationBool(character.swingMelee2Param, true);
-        //            break;
-        //        case 3:
-        //            character.SetAnimationBool(character.swingMelee3Param, true);
-        //            break;
-        //        // Add more cases if needed for additional combo attacks
-        //        default:
-        //            character.SetAnimationBool(character.swingMeleeParam, true);
-        //            break;
-        //    }
-        //}
     }
 }
