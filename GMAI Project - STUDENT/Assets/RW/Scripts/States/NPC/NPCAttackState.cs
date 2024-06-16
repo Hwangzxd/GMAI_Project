@@ -12,9 +12,6 @@ namespace FSM
         private float clipSpeed;
         private bool attack;
 
-        //public int currentAttack = 0;
-        //private float comboResetTime = 1f; // Time in seconds to reset the combo if no new attack
-
         public NPCAttackState(NPC npc, AIStateMachine aiStateMachine) : base(npc, aiStateMachine)
         {
         }
@@ -23,15 +20,9 @@ namespace FSM
         {
             base.Enter();
             npc.SetAnimationBool(npc.attackParam, true);
-            attack = false;
             timePassed = 0f;
 
-            npc.animator.applyRootMotion = true;
-            //character.anim.SetFloat("speed", 0f);
-
-            //PlayAttackAnimation();
-
-            //SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
+            //npc.animator.applyRootMotion = true;
         }
 
         public override void Exit()
@@ -39,22 +30,26 @@ namespace FSM
             base.Exit();
             npc.SetAnimationBool(npc.attackParam, false);
 
-            npc.animator.applyRootMotion = false;
+            //npc.animator.applyRootMotion = false;
         }
 
         public override void HandleInput()
         {
             base.HandleInput();
-            attack = Input.GetButtonDown("Attack");
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
 
+            if (npc.player == null)
+            {
+                return;
+            }
+
             timePassed += Time.deltaTime;
-            clipLength = npc.animator.GetCurrentAnimatorClipInfo(1)[0].clip.length;
-            clipSpeed = npc.animator.GetCurrentAnimatorStateInfo(1).speed;
+            clipLength = npc.animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+            clipSpeed = npc.animator.GetCurrentAnimatorStateInfo(0).speed;
 
             if (timePassed >= clipLength / clipSpeed && attack)
             {
@@ -63,8 +58,17 @@ namespace FSM
 
             if (timePassed >= clipLength / clipSpeed)
             {
-                aiStateMachine.ChangeState(npc.idle);
+                aiStateMachine.ChangeState(npc.roaming);
             }
+
+            //Transition to chase state
+            if (npc.newDestinationCD <= 0 && Vector3.Distance(npc.player.transform.position, npc.transform.position) <= npc.aggroRange)
+            {
+                npc.newDestinationCD = 0.5f;
+                //npc.agent.SetDestination(npc.player.transform.position);
+                aiStateMachine.ChangeState(npc.chase);
+            }
+            npc.newDestinationCD -= Time.deltaTime;
         }
     }
 }
